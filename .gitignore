@@ -1,0 +1,25 @@
+# Gradle
+.gradle/
+build/
+local.properties
+*.hprof
+
+# Android Studio
+.idea/
+*.iml
+.DS_Store
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Keystore
+*.jks
+*.keystore
+
+# OS
+.DS_Store
+._*
+Thumbs.db
+
+# Generated
+/app/release/
