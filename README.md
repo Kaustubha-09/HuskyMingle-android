@@ -19,7 +19,23 @@ Northeastern students juggle 6+ apps to handle campus life — Instagram for pos
 
 ## Screenshots
 
-Drop captures into [`Screenshots/`](Screenshots/) with the convention `01_splash.png · 02_login.png · 03_feed_stories.png · 04_explore.png · 05_user_profile.png · 06_marketplace.png · 07_marketplace_detail.png` — the Compose surface mirrors the iOS layout 1-to-1 (5-tab bottom nav, husky-red `#8B0000` primary + gold `#FFD700` accent, ephemeral story ring on top of the feed, mode badge on every profile), so reference shots live in [`HuskyMingle-ios/Screenshots/`](https://github.com/Kaustubha-09/HuskyMingle-ios/tree/main/Screenshots) in the meantime.
+> Captured at 390 × 844 (iPhone 14 Pro viewport) via the shared NestJS backend.
+
+| Login | Register | Feed |
+|:-:|:-:|:-:|
+| ![Login](Screenshots/01_login.png) | ![Register](Screenshots/02_register.png) | ![Feed](Screenshots/03_feed.png) |
+
+| Explore | Messages | Communities |
+|:-:|:-:|:-:|
+| ![Explore](Screenshots/04_explore.png) | ![Messages](Screenshots/05_messages.png) | ![Communities](Screenshots/06_communities.png) |
+
+| Circles | Marketplace | Events |
+|:-:|:-:|:-:|
+| ![Circles](Screenshots/07_circles.png) | ![Marketplace](Screenshots/08_marketplace.png) | ![Events](Screenshots/09_events.png) |
+
+| Gaming | Jobs | Courses |
+|:-:|:-:|:-:|
+| ![Gaming](Screenshots/10_gaming.png) | ![Jobs](Screenshots/11_jobs.png) | ![Courses](Screenshots/12_courses.png) |
 
 ---
 
