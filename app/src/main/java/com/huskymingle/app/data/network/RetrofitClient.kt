@@ -1,8 +1,6 @@
 package com.huskymingle.app.data.network
 
 import com.huskymingle.app.data.local.AuthDataStore
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -14,21 +12,22 @@ object RetrofitClient {
 
     private const val BASE_URL = "http://10.0.2.2:3001/api/v1/"
 
-    private lateinit var authDataStore: AuthDataStore
+    // Volatile cache avoids runBlocking on every request (prevents ANR under load).
+    // AuthViewModel seeds this on restoreSession() and updates it on login/logout.
+    @Volatile private var cachedToken: String? = null
 
-    fun init(dataStore: AuthDataStore) {
-        authDataStore = dataStore
+    fun init(dataStore: AuthDataStore) { /* kept for compatibility */ }
+
+    fun updateToken(token: String?) {
+        cachedToken = token
     }
 
     private val authInterceptor = Interceptor { chain ->
-        val token = runBlocking { authDataStore.accessToken.firstOrNull() }
-        val request = if (token != null) {
+        val request = cachedToken?.let {
             chain.request().newBuilder()
-                .addHeader("Authorization", "Bearer $token")
+                .addHeader("Authorization", "Bearer $it")
                 .build()
-        } else {
-            chain.request()
-        }
+        } ?: chain.request()
         chain.proceed(request)
     }
 

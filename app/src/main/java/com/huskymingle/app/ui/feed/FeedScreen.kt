@@ -1,6 +1,7 @@
 package com.huskymingle.app.ui.feed
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,7 +24,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.huskymingle.app.data.model.CreatePostRequest
 import com.huskymingle.app.data.model.Post
 import com.huskymingle.app.data.network.RetrofitClient
+import com.huskymingle.app.ui.stories.StoriesRingView
 import com.huskymingle.app.ui.theme.HuskyRed
+import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -33,7 +36,11 @@ import java.time.temporal.ChronoUnit
 @Composable
 fun FeedScreen(
     feedViewModel: FeedViewModel = viewModel(),
-    onMenuOpen: () -> Unit = {}
+    onMenuOpen: () -> Unit = {},
+    onCreateStory: () -> Unit = {},
+    onOpenStory: (String) -> Unit = {},
+    onOpenPost: (String) -> Unit = {},
+    onOpenAuthor: (String) -> Unit = {},
 ) {
     val feedState by feedViewModel.feedState.collectAsState()
     val isRefreshing by feedViewModel.isRefreshing.collectAsState()
@@ -108,10 +115,18 @@ fun FeedScreen(
                             contentPadding = PaddingValues(vertical = 8.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
+                            item {
+                                StoriesRingView(
+                                    onCreateStory = onCreateStory,
+                                    onOpenStory = { onOpenStory(it.id) },
+                                )
+                            }
                             items(state.posts, key = { it.id }) { post ->
                                 PostCard(
                                     post = post,
-                                    onLike = { feedViewModel.toggleLike(post) }
+                                    onLike = { feedViewModel.toggleLike(post) },
+                                    onTap = { onOpenPost(post.id) },
+                                    onAuthorTap = { onOpenAuthor(post.author.username) },
                                 )
                             }
                         }
@@ -133,11 +148,17 @@ fun FeedScreen(
 }
 
 @Composable
-fun PostCard(post: Post, onLike: () -> Unit) {
+fun PostCard(
+    post: Post,
+    onLike: () -> Unit,
+    onTap: () -> Unit = {},
+    onAuthorTap: () -> Unit = {},
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp),
+            .padding(horizontal = 12.dp)
+            .clickable(onClick = onTap),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -145,7 +166,8 @@ fun PostCard(post: Post, onLike: () -> Unit) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.clickable(onClick = onAuthorTap),
             ) {
                 AvatarInitials(
                     name = post.author.displayName.ifEmpty { post.author.username },

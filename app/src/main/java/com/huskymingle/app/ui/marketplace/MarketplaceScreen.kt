@@ -1,5 +1,6 @@
 package com.huskymingle.app.ui.marketplace
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -50,7 +51,11 @@ class MarketplaceViewModel : ViewModel() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MarketplaceScreen(viewModel: MarketplaceViewModel = viewModel(), onMenuOpen: () -> Unit = {}) {
+fun MarketplaceScreen(
+    viewModel: MarketplaceViewModel = viewModel(),
+    onMenuOpen: () -> Unit = {},
+    onOpenItem: (String) -> Unit = {},
+) {
     val items by viewModel.items.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
@@ -106,7 +111,7 @@ fun MarketplaceScreen(viewModel: MarketplaceViewModel = viewModel(), onMenuOpen:
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(filtered, key = { it.id }) { item ->
-                        MarketplaceItemCard(item)
+                        MarketplaceItemCard(item, onClick = { onOpenItem(item.id) })
                     }
                 }
             }
@@ -115,9 +120,11 @@ fun MarketplaceScreen(viewModel: MarketplaceViewModel = viewModel(), onMenuOpen:
 }
 
 @Composable
-fun MarketplaceItemCard(item: MarketplaceItem) {
+fun MarketplaceItemCard(item: MarketplaceItem, onClick: () -> Unit = {}) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)

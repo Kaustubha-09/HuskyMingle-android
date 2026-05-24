@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="hm_launcher_background">#8B0000</color>
+    <color name="hm_white">#FFFFFF</color>
+    <color name="hm_gold">#FFD700</color>
+</resources>

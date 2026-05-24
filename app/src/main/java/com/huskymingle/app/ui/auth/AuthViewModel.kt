@@ -45,6 +45,8 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                 _authState.value = AuthState.LoggedOut
                 return@launch
             }
+            // Seed volatile cache before making the first API call
+            RetrofitClient.updateToken(token)
             try {
                 val user = api.getMe()
                 _authState.value = if (!user.onboardingCompleted) {
@@ -53,6 +55,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                     AuthState.LoggedIn(user)
                 }
             } catch (e: Exception) {
+                RetrofitClient.updateToken(null)
                 authDataStore.clearTokens()
                 _authState.value = AuthState.LoggedOut
             }
@@ -66,6 +69,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val response = api.login(LoginRequest(email, password))
                 authDataStore.saveTokens(response.accessToken, response.refreshToken, response.user.id)
+                RetrofitClient.updateToken(response.accessToken)
                 _authState.value = if (!response.user.onboardingCompleted) {
                     AuthState.NeedsOnboarding(response.user)
                 } else {
@@ -126,6 +130,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     fun logout() {
         viewModelScope.launch {
+            RetrofitClient.updateToken(null)
             authDataStore.clearTokens()
             _authState.value = AuthState.LoggedOut
         }

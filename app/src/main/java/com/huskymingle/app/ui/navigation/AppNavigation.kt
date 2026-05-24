@@ -1,35 +1,55 @@
 package com.huskymingle.app.ui.navigation
 
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.huskymingle.app.HuskyMingleApp
+import com.huskymingle.app.security.BiometricService
 import com.huskymingle.app.ui.audio.AudioScreen
 import com.huskymingle.app.ui.auth.*
 import com.huskymingle.app.ui.bookmarks.BookmarksScreen
+import com.huskymingle.app.ui.circles.CircleDetailScreen
+import com.huskymingle.app.ui.circles.CirclesScreen
+import com.huskymingle.app.ui.circles.CreateCircleScreen
 import com.huskymingle.app.ui.communities.CommunitiesScreen
+import com.huskymingle.app.ui.courses.CourseDetailScreen
 import com.huskymingle.app.ui.courses.CoursesScreen
 import com.huskymingle.app.ui.events.EventsScreen
 import com.huskymingle.app.ui.explore.ExploreScreen
 import com.huskymingle.app.ui.feed.FeedScreen
+import com.huskymingle.app.ui.feed.PostDetailScreen
 import com.huskymingle.app.ui.gaming.GamingScreen
 import com.huskymingle.app.ui.jobs.JobsScreen
 import com.huskymingle.app.ui.live.LiveScreen
 import com.huskymingle.app.ui.main.MainShell
+import com.huskymingle.app.ui.marketplace.MarketplaceItemScreen
 import com.huskymingle.app.ui.marketplace.MarketplaceScreen
+import com.huskymingle.app.ui.messages.ChatScreen
 import com.huskymingle.app.ui.messages.MessagesScreen
 import com.huskymingle.app.ui.notifications.NotificationsScreen
 import com.huskymingle.app.ui.polls.PollsScreen
 import com.huskymingle.app.ui.profile.ProfileScreen
+import com.huskymingle.app.ui.profile.UserListKind
+import com.huskymingle.app.ui.profile.UserListScreen
+import com.huskymingle.app.ui.profile.UserProfileScreen
 import com.huskymingle.app.ui.qa.QaScreen
 import com.huskymingle.app.ui.reels.ReelsScreen
 import com.huskymingle.app.ui.search.SearchScreen
 import com.huskymingle.app.ui.settings.SettingsScreen
+import com.huskymingle.app.ui.stories.CreateStoryScreen
+import com.huskymingle.app.ui.stories.StoryViewerScreen
+import kotlinx.coroutines.delay
+
+private const val SPLASH_MIN_HOLD_MS = 1_400L
 
 sealed class Screen(val route: String) {
+    object Splash : Screen("splash")
+    object BiometricLock : Screen("biometric_lock")
     object Login : Screen("login")
     object Register : Screen("register")
     object VerifyEmail : Screen("verify_email/{email}") {
@@ -55,6 +75,33 @@ sealed class Screen(val route: String) {
     object Reels : Screen("reels")
     object Live : Screen("live")
     object Bookmarks : Screen("bookmarks")
+    object CreateStory : Screen("create_story")
+    object StoryViewer : Screen("story_viewer/{storyId}") {
+        fun createRoute(storyId: String) = "story_viewer/$storyId"
+    }
+    object PostDetail : Screen("post_detail/{postId}") {
+        fun createRoute(postId: String) = "post_detail/$postId"
+    }
+    object UserProfile : Screen("user_profile/{username}") {
+        fun createRoute(username: String) = "user_profile/$username"
+    }
+    object FollowerList : Screen("user_list/{username}/{kind}") {
+        fun createRoute(username: String, kind: String) = "user_list/$username/$kind"
+    }
+    object Chat : Screen("chat/{conversationId}") {
+        fun createRoute(conversationId: String) = "chat/$conversationId"
+    }
+    object MarketplaceItem : Screen("marketplace/{itemId}") {
+        fun createRoute(itemId: String) = "marketplace/$itemId"
+    }
+    object Circles : Screen("circles")
+    object CircleDetail : Screen("circle/{circleId}") {
+        fun createRoute(circleId: String) = "circle/$circleId"
+    }
+    object CreateCircle : Screen("circle_create")
+    object CourseDetail : Screen("course/{courseCode}") {
+        fun createRoute(courseCode: String) = "course/$courseCode"
+    }
 }
 
 @Composable
@@ -63,17 +110,38 @@ fun AppNavigation() {
     val authViewModel: AuthViewModel = viewModel()
     val authState by authViewModel.authState.collectAsState()
 
-    LaunchedEffect(authState) {
+    val context = LocalContext.current
+    val prefs = remember { (context.applicationContext as HuskyMingleApp).userPreferences }
+    val biometricEnabled by prefs.biometricEnabled.collectAsState(initial = false)
+
+    var splashHoldElapsed by remember { mutableStateOf(false) }
+    var biometricUnlocked by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        delay(SPLASH_MIN_HOLD_MS)
+        splashHoldElapsed = true
+    }
+
+    LaunchedEffect(authState, splashHoldElapsed, biometricUnlocked, biometricEnabled) {
+        if (!splashHoldElapsed) return@LaunchedEffect
         when (authState) {
-            is AuthState.Loading -> Unit
-            is AuthState.LoggedOut -> navController.navigate(Screen.Login.route) {
-                popUpTo(0) { inclusive = true }
+            AuthState.Loading -> Unit
+            AuthState.LoggedOut -> {
+                biometricUnlocked = false
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(0) { inclusive = true }
+                }
             }
             is AuthState.NeedsOnboarding -> navController.navigate(Screen.Onboarding.route) {
                 popUpTo(0) { inclusive = true }
             }
-            is AuthState.LoggedIn -> navController.navigate(Screen.Feed.route) {
-                popUpTo(0) { inclusive = true }
+            is AuthState.LoggedIn -> {
+                val needsBiometric =
+                    biometricEnabled && BiometricService.isAvailable(context) && !biometricUnlocked
+                val target = if (needsBiometric) Screen.BiometricLock.route else Screen.Feed.route
+                navController.navigate(target) {
+                    popUpTo(0) { inclusive = true }
+                }
             }
             is AuthState.Error -> navController.navigate(Screen.Login.route) {
                 popUpTo(0) { inclusive = true }
@@ -83,8 +151,22 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Login.route
+        startDestination = Screen.Splash.route
     ) {
+        composable(Screen.Splash.route) {
+            SplashScreen()
+        }
+        composable(Screen.BiometricLock.route) {
+            BiometricLockScreen(
+                onSuccess = {
+                    biometricUnlocked = true
+                    navController.navigate(Screen.Feed.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                onCancel = { authViewModel.logout() },
+            )
+        }
         composable(Screen.Login.route) {
             LoginScreen(
                 viewModel = authViewModel,
@@ -120,8 +202,67 @@ fun AppNavigation() {
         }
         composable(Screen.Feed.route) {
             MainShell(navController = navController, authViewModel = authViewModel) { onMenuOpen ->
-                FeedScreen(onMenuOpen = onMenuOpen)
+                FeedScreen(
+                    onMenuOpen = onMenuOpen,
+                    onCreateStory = { navController.navigate(Screen.CreateStory.route) },
+                    onOpenStory = { id -> navController.navigate(Screen.StoryViewer.createRoute(id)) },
+                    onOpenPost = { id -> navController.navigate(Screen.PostDetail.createRoute(id)) },
+                    onOpenAuthor = { username -> navController.navigate(Screen.UserProfile.createRoute(username)) },
+                )
             }
+        }
+        composable(Screen.CreateStory.route) {
+            CreateStoryScreen(onClose = { navController.popBackStack() }, authViewModel = authViewModel)
+        }
+        composable(
+            route = Screen.StoryViewer.route,
+            arguments = listOf(navArgument("storyId") { type = NavType.StringType }),
+        ) { backStackEntry ->
+            val storyId = backStackEntry.arguments?.getString("storyId") ?: ""
+            StoryViewerScreen(
+                initialStoryId = storyId,
+                onClose = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = Screen.PostDetail.route,
+            arguments = listOf(navArgument("postId") { type = NavType.StringType }),
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("postId") ?: ""
+            PostDetailScreen(
+                postId = id,
+                onBack = { navController.popBackStack() },
+                onOpenAuthor = { username -> navController.navigate(Screen.UserProfile.createRoute(username)) },
+            )
+        }
+        composable(
+            route = Screen.UserProfile.route,
+            arguments = listOf(navArgument("username") { type = NavType.StringType }),
+        ) { backStackEntry ->
+            val username = backStackEntry.arguments?.getString("username") ?: ""
+            UserProfileScreen(
+                username = username,
+                onBack = { navController.popBackStack() },
+                onOpenFollowers = { u -> navController.navigate(Screen.FollowerList.createRoute(u, "followers")) },
+                onOpenFollowing = { u -> navController.navigate(Screen.FollowerList.createRoute(u, "following")) },
+            )
+        }
+        composable(
+            route = Screen.FollowerList.route,
+            arguments = listOf(
+                navArgument("username") { type = NavType.StringType },
+                navArgument("kind") { type = NavType.StringType },
+            ),
+        ) { backStackEntry ->
+            val username = backStackEntry.arguments?.getString("username") ?: ""
+            val kindRaw = backStackEntry.arguments?.getString("kind") ?: "followers"
+            val kind = if (kindRaw == "following") UserListKind.FOLLOWING else UserListKind.FOLLOWERS
+            UserListScreen(
+                username = username,
+                kind = kind,
+                onBack = { navController.popBackStack() },
+                onOpenUser = { u -> navController.navigate(Screen.UserProfile.createRoute(u)) },
+            )
         }
         composable(Screen.Explore.route) {
             MainShell(navController = navController, authViewModel = authViewModel) { onMenuOpen ->
@@ -140,8 +281,22 @@ fun AppNavigation() {
         }
         composable(Screen.Messages.route) {
             MainShell(navController = navController, authViewModel = authViewModel) { onMenuOpen ->
-                MessagesScreen(onMenuOpen = onMenuOpen)
+                MessagesScreen(
+                    onMenuOpen = onMenuOpen,
+                    onOpenConversation = { id -> navController.navigate(Screen.Chat.createRoute(id)) },
+                )
             }
+        }
+        composable(
+            route = Screen.Chat.route,
+            arguments = listOf(navArgument("conversationId") { type = NavType.StringType }),
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("conversationId") ?: ""
+            ChatScreen(
+                conversationId = id,
+                onBack = { navController.popBackStack() },
+                onOpenAuthor = { u -> navController.navigate(Screen.UserProfile.createRoute(u)) },
+            )
         }
         composable(Screen.Communities.route) {
             MainShell(navController = navController, authViewModel = authViewModel) { onMenuOpen ->
@@ -150,8 +305,22 @@ fun AppNavigation() {
         }
         composable(Screen.Marketplace.route) {
             MainShell(navController = navController, authViewModel = authViewModel) { onMenuOpen ->
-                MarketplaceScreen(onMenuOpen = onMenuOpen)
+                MarketplaceScreen(
+                    onMenuOpen = onMenuOpen,
+                    onOpenItem = { id -> navController.navigate(Screen.MarketplaceItem.createRoute(id)) },
+                )
             }
+        }
+        composable(
+            route = Screen.MarketplaceItem.route,
+            arguments = listOf(navArgument("itemId") { type = NavType.StringType }),
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("itemId") ?: ""
+            MarketplaceItemScreen(
+                itemId = id,
+                onBack = { navController.popBackStack() },
+                onOpenSeller = { u -> navController.navigate(Screen.UserProfile.createRoute(u)) },
+            )
         }
         composable(Screen.Notifications.route) {
             MainShell(navController = navController, authViewModel = authViewModel) { onMenuOpen ->
@@ -165,7 +334,13 @@ fun AppNavigation() {
         }
         composable(Screen.Profile.route) {
             MainShell(navController = navController, authViewModel = authViewModel) { onMenuOpen ->
-                ProfileScreen(authViewModel = authViewModel, onMenuOpen = onMenuOpen)
+                ProfileScreen(
+                    authViewModel = authViewModel,
+                    onMenuOpen = onMenuOpen,
+                    onOpenCircles = { navController.navigate(Screen.Circles.route) },
+                    onOpenFollowers = { u -> navController.navigate(Screen.FollowerList.createRoute(u, "followers")) },
+                    onOpenFollowing = { u -> navController.navigate(Screen.FollowerList.createRoute(u, "following")) },
+                )
             }
         }
         composable(Screen.Settings.route) {
@@ -190,8 +365,18 @@ fun AppNavigation() {
         }
         composable(Screen.Courses.route) {
             MainShell(navController = navController, authViewModel = authViewModel) { onMenuOpen ->
-                CoursesScreen(onMenuOpen = onMenuOpen)
+                CoursesScreen(
+                    onMenuOpen = onMenuOpen,
+                    onOpenCourse = { code -> navController.navigate(Screen.CourseDetail.createRoute(code)) },
+                )
             }
+        }
+        composable(
+            route = Screen.CourseDetail.route,
+            arguments = listOf(navArgument("courseCode") { type = NavType.StringType }),
+        ) { backStackEntry ->
+            val code = backStackEntry.arguments?.getString("courseCode") ?: ""
+            CourseDetailScreen(courseCode = code, onBack = { navController.popBackStack() })
         }
         composable(Screen.Audio.route) {
             MainShell(navController = navController, authViewModel = authViewModel) { onMenuOpen ->
@@ -212,6 +397,23 @@ fun AppNavigation() {
             MainShell(navController = navController, authViewModel = authViewModel) { onMenuOpen ->
                 BookmarksScreen(onMenuOpen = onMenuOpen)
             }
+        }
+        composable(Screen.Circles.route) {
+            CirclesScreen(
+                onBack = { navController.popBackStack() },
+                onOpenCircle = { id -> navController.navigate(Screen.CircleDetail.createRoute(id)) },
+                onCreateCircle = { navController.navigate(Screen.CreateCircle.route) },
+            )
+        }
+        composable(Screen.CreateCircle.route) {
+            CreateCircleScreen(onClose = { navController.popBackStack() })
+        }
+        composable(
+            route = Screen.CircleDetail.route,
+            arguments = listOf(navArgument("circleId") { type = NavType.StringType }),
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("circleId") ?: ""
+            CircleDetailScreen(circleId = id, onBack = { navController.popBackStack() })
         }
     }
 }

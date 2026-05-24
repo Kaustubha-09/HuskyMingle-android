@@ -1,10 +1,12 @@
 package com.huskymingle.app.ui.messages
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Message
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -50,7 +52,11 @@ class MessagesViewModel : ViewModel() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MessagesScreen(viewModel: MessagesViewModel = viewModel(), onMenuOpen: () -> Unit = {}) {
+fun MessagesScreen(
+    viewModel: MessagesViewModel = viewModel(),
+    onMenuOpen: () -> Unit = {},
+    onOpenConversation: (String) -> Unit = {},
+) {
     val conversations by viewModel.conversations.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
@@ -84,7 +90,7 @@ fun MessagesScreen(viewModel: MessagesViewModel = viewModel(), onMenuOpen: () ->
                 }
                 conversations.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Default.Message, contentDescription = null,
+                        Icon(Icons.AutoMirrored.Filled.Message, contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(48.dp))
                         Spacer(Modifier.height(8.dp))
                         Text("No conversations yet", color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -92,7 +98,7 @@ fun MessagesScreen(viewModel: MessagesViewModel = viewModel(), onMenuOpen: () ->
                 }
                 else -> LazyColumn {
                     items(conversations, key = { it.id }) { conv ->
-                        ConversationItem(conv)
+                        ConversationItem(conv, onClick = { onOpenConversation(conv.id) })
                         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                     }
                 }
@@ -102,13 +108,14 @@ fun MessagesScreen(viewModel: MessagesViewModel = viewModel(), onMenuOpen: () ->
 }
 
 @Composable
-fun ConversationItem(conversation: Conversation) {
+fun ConversationItem(conversation: Conversation, onClick: () -> Unit = {}) {
     val name = conversation.participant.displayName.ifEmpty { conversation.participant.username }
     val hasUnread = conversation.unreadCount > 0
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { onClick() }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)

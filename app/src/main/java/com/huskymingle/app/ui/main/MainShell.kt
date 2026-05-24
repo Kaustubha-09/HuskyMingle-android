@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Message
+import androidx.compose.material.icons.automirrored.outlined.Message
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -38,7 +40,7 @@ data class DrawerItem(
 val bottomNavItems = listOf(
     BottomNavItem("Feed", Screen.Feed.route, Icons.Filled.Home, Icons.Outlined.Home),
     BottomNavItem("Explore", Screen.Explore.route, Icons.Filled.Explore, Icons.Outlined.Explore),
-    BottomNavItem("Messages", Screen.Messages.route, Icons.Filled.Message, Icons.Outlined.Message),
+    BottomNavItem("Messages", Screen.Messages.route, Icons.AutoMirrored.Filled.Message, Icons.AutoMirrored.Outlined.Message),
     BottomNavItem("Market", Screen.Marketplace.route, Icons.Filled.Store, Icons.Outlined.Store),
     BottomNavItem("Profile", Screen.Profile.route, Icons.Filled.Person, Icons.Outlined.Person)
 )
@@ -49,7 +51,7 @@ val drawerItems = listOf(
     DrawerItem("Events", Screen.Events.route, Icons.Default.Event, "Campus"),
     DrawerItem("Jobs & Internships", Screen.Jobs.route, Icons.Default.Work, "Campus"),
     DrawerItem("Communities", Screen.Communities.route, Icons.Default.Group, "Campus"),
-    DrawerItem("Messages", Screen.Messages.route, Icons.Default.Message, "Social"),
+    DrawerItem("Messages", Screen.Messages.route, Icons.AutoMirrored.Filled.Message, "Social"),
     DrawerItem("Notifications", Screen.Notifications.route, Icons.Default.Notifications, "Social"),
     DrawerItem("Search", Screen.Search.route, Icons.Default.Search, "Social"),
     DrawerItem("Marketplace", Screen.Marketplace.route, Icons.Default.Store, "Social"),

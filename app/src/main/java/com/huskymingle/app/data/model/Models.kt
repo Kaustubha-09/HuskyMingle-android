@@ -35,6 +35,23 @@ data class Post(
     val type: String = "text"
 )
 
+data class Comment(
+    val id: String = "",
+    val content: String = "",
+    val author: User = User(),
+    @SerializedName("created_at") val createdAt: String = "",
+    @SerializedName("parent_id") val parentId: String? = null,
+    @SerializedName("post_id") val postId: String = "",
+    val replies: List<Comment> = emptyList(),
+    @SerializedName("likes_count") val likesCount: Int = 0,
+    @SerializedName("is_liked") val isLiked: Boolean = false,
+)
+
+data class CreateCommentRequest(
+    val content: String,
+    @SerializedName("parent_id") val parentId: String? = null,
+)
+
 data class Event(
     val id: String = "",
     val title: String = "",
@@ -232,6 +249,7 @@ data class OnboardingRequest(
     @SerializedName("graduation_year") val graduationYear: Int?
 )
 data class CreatePostRequest(val content: String, val hashtags: List<String> = emptyList())
+data class SendMessageRequest(val content: String)
 data class PollVoteRequest(@SerializedName("option_id") val optionId: String)
 
 data class LoginResponse(

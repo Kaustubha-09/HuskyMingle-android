@@ -1,0 +1,61 @@
+[
+  { "code": "CS 2500", "name": "Fundamentals of Computer Science 1", "department": "CS", "credits": 4, "instructor": "Olin Shivers", "description": "Introduces design recipes, data definitions, and recursion. Foundation for the CS sequence." },
+  { "code": "CS 2510", "name": "Fundamentals of Computer Science 2", "department": "CS", "credits": 4, "instructor": "Amal Ahmed", "description": "Continues the recipe-driven design approach with abstraction, generics, and an intro to OOP." },
+  { "code": "CS 2800", "name": "Logic and Computation", "department": "CS", "credits": 4, "instructor": "Pete Manolios", "description": "Mathematical reasoning about programs using ACL2; induction, proofs, and formal correctness." },
+  { "code": "CS 3000", "name": "Algorithms and Data", "department": "CS", "credits": 4, "instructor": "Virgil Pavlu", "description": "Asymptotic analysis, divide and conquer, dynamic programming, graphs, NP-completeness." },
+  { "code": "CS 3500", "name": "Object-Oriented Design", "department": "CS", "credits": 4, "instructor": "Matthias Felleisen", "description": "Design patterns, refactoring, MVC, and large-scale OO architecture in Java." },
+  { "code": "CS 3650", "name": "Computer Systems", "department": "CS", "credits": 4, "instructor": "Alan Mislove", "description": "C, memory, processes, virtual memory, concurrency, file systems, and networking." },
+  { "code": "CS 3700", "name": "Networks and Distributed Systems", "department": "CS", "credits": 4, "instructor": "Cristina Nita-Rotaru", "description": "TCP/IP, routing, RPC, consensus, distributed storage, and fault tolerance." },
+  { "code": "CS 3800", "name": "Theory of Computation", "department": "CS", "credits": 4, "instructor": "Emanuele Viola", "description": "Automata, languages, computability, and complexity classes." },
+  { "code": "CS 4100", "name": "Artificial Intelligence", "department": "CS", "credits": 4, "instructor": "Robert Platt", "description": "Search, knowledge representation, planning, and intro reinforcement learning." },
+  { "code": "CS 4120", "name": "Natural Language Processing", "department": "CS", "credits": 4, "instructor": "Lu Wang", "description": "Tokenization, parsing, language models, embeddings, and modern transformer-based NLP." },
+  { "code": "CS 4150", "name": "Game AI", "department": "CS", "credits": 4, "instructor": "Chris Amato", "description": "AI techniques for games: pathfinding, decision-making, learning agents." },
+  { "code": "CS 4200", "name": "Computer Graphics", "department": "CS", "credits": 4, "instructor": "Hanspeter Pfister", "description": "Rasterization, ray tracing, shaders, and modern rendering pipelines." },
+  { "code": "CS 4300", "name": "Computer Graphics 2", "department": "CS", "credits": 4, "instructor": "Hanspeter Pfister", "description": "Advanced rendering, geometry processing, animation, and GPU computing." },
+  { "code": "CS 4500", "name": "Software Development", "department": "CS", "credits": 4, "instructor": "Matthias Felleisen", "description": "Build a real product in teams — engineering process, tests, and code review." },
+  { "code": "CS 4520", "name": "Mobile App Development", "department": "CS", "credits": 4, "instructor": "Jose Annunziato", "description": "Native iOS (Swift/SwiftUI) and Android (Kotlin/Compose); persistence, networking, sensors." },
+  { "code": "CS 4550", "name": "Web Development", "department": "CS", "credits": 4, "instructor": "Jose Annunziato", "description": "Full-stack JavaScript: React, Node, Express, MongoDB; auth and deployment." },
+  { "code": "CS 4610", "name": "Robotic Science and Systems", "department": "CS", "credits": 4, "instructor": "Robert Platt", "description": "Sensors, actuators, kinematics, and SLAM on real robot platforms." },
+  { "code": "CS 4700", "name": "Network Fundamentals", "department": "CS", "credits": 4, "instructor": "Cristina Nita-Rotaru", "description": "Deep dive into TCP/IP, QUIC, BGP, and network performance." },
+  { "code": "CS 4800", "name": "Software Vulnerabilities and Security", "department": "CS", "credits": 4, "instructor": "Cristina Nita-Rotaru", "description": "Buffer overflows, web vulns, fuzzing, and secure coding practices." },
+  { "code": "CS 4830", "name": "Systems Security", "department": "CS", "credits": 4, "instructor": "Long Lu", "description": "OS-level attacks and defenses; exploit mitigations, sandboxing, and trusted computing." },
+
+  { "code": "DS 2000", "name": "Programming with Data", "department": "DS", "credits": 4, "instructor": "Laney Strange", "description": "Python for data: pandas, numpy, plotting, intro to data engineering." },
+  { "code": "DS 2500", "name": "Intermediate Programming with Data", "department": "DS", "credits": 4, "instructor": "Laney Strange", "description": "Statistical thinking, regression, classification, and data pipelines." },
+  { "code": "DS 3000", "name": "Foundations of Data Science", "department": "DS", "credits": 4, "instructor": "Stephen Intille", "description": "ML foundations: linear models, evaluation, feature engineering." },
+  { "code": "DS 3500", "name": "Advanced Programming with Data", "department": "DS", "credits": 4, "instructor": "John Rachlin", "description": "Software engineering for data: APIs, OOP, testing, and architecture." },
+  { "code": "DS 4400", "name": "Machine Learning and Data Mining 1", "department": "DS", "credits": 4, "instructor": "Pedram Hassanzadeh", "description": "Supervised learning: SVMs, decision trees, ensembles, and model selection." },
+  { "code": "DS 4420", "name": "Machine Learning and Data Mining 2", "department": "DS", "credits": 4, "instructor": "Predrag Radivojac", "description": "Unsupervised learning, dimensionality reduction, neural nets, and deep learning." },
+
+  { "code": "CY 2550", "name": "Foundations of Cybersecurity", "department": "CY", "credits": 4, "instructor": "Engin Kirda", "description": "CIA triad, cryptography basics, threat modeling, and ethical hacking." },
+  { "code": "CY 3740", "name": "Systems Security", "department": "CY", "credits": 4, "instructor": "Long Lu", "description": "Cross-listed with CS 4830 — OS-level attacks and defenses." },
+  { "code": "CY 4760", "name": "Network Security Practices", "department": "CY", "credits": 4, "instructor": "Cristina Nita-Rotaru", "description": "TLS, firewalls, IDS/IPS, and incident response." },
+  { "code": "CY 4770", "name": "Cryptography", "department": "CY", "credits": 4, "instructor": "Daniel Wichs", "description": "Symmetric and public-key crypto, hash functions, and modern protocols." },
+
+  { "code": "MATH 1341", "name": "Calculus 1 for Science/Engineering", "department": "MATH", "credits": 4, "instructor": "Anthony Iarrobino", "description": "Limits, derivatives, applications, and an intro to integration." },
+  { "code": "MATH 1342", "name": "Calculus 2 for Science/Engineering", "department": "MATH", "credits": 4, "instructor": "Solomon Jekel", "description": "Techniques of integration, series, and parametric/polar coordinates." },
+  { "code": "MATH 2331", "name": "Linear Algebra", "department": "MATH", "credits": 4, "instructor": "Robert McOwen", "description": "Vectors, matrices, eigenvectors, and linear transformations." },
+  { "code": "MATH 3081", "name": "Probability and Statistics", "department": "MATH", "credits": 4, "instructor": "Bob Lutts", "description": "Probability distributions, estimators, hypothesis testing, and confidence intervals." },
+
+  { "code": "EECE 2160", "name": "Embedded Design", "department": "EECE", "credits": 4, "instructor": "Gunar Schirner", "description": "C programming for microcontrollers; ARM Cortex-M and embedded peripherals." },
+  { "code": "EECE 2412", "name": "Fundamentals of Electronics", "department": "EECE", "credits": 4, "instructor": "Brad Lehman", "description": "Analog and digital electronics, op-amps, and PCB design." },
+  { "code": "EECE 3324", "name": "Computer Architecture", "department": "EECE", "credits": 4, "instructor": "David Kaeli", "description": "Pipelines, caches, memory hierarchy, and SIMD." },
+
+  { "code": "ENGW 1111", "name": "First-Year Writing", "department": "ENGW", "credits": 4, "instructor": "Beth Britt", "description": "Academic writing fundamentals, argumentation, and revision." },
+  { "code": "ENGW 3302", "name": "Advanced Writing in the Disciplines", "department": "ENGW", "credits": 4, "instructor": "Mya Poe", "description": "Discipline-specific genre writing for technical and professional contexts." },
+
+  { "code": "PHIL 1145", "name": "Tech and Human Values", "department": "PHIL", "credits": 4, "instructor": "John Basl", "description": "Ethics of technology, AI, privacy, and engineering responsibility." },
+  { "code": "PHIL 5010", "name": "Ethics of AI", "department": "PHIL", "credits": 4, "instructor": "Kathleen Creel", "description": "Algorithmic fairness, accountability, transparency, and AI governance." },
+
+  { "code": "PSYC 1101", "name": "Foundations of Psychology", "department": "PSYC", "credits": 4, "instructor": "Joanne Miller", "description": "Survey of cognitive, social, and clinical psychology." },
+  { "code": "PSYC 3458", "name": "Human-Computer Interaction", "department": "PSYC", "credits": 4, "instructor": "Stephen Intille", "description": "Usability, prototyping, and user research methods." },
+
+  { "code": "ARTG 2250", "name": "Information Design Studio", "department": "ARTG", "credits": 4, "instructor": "Paolo Ciuccarelli", "description": "Visualizing data and complex systems with editorial design principles." },
+  { "code": "ARTG 3450", "name": "Interaction Design Studio", "department": "ARTG", "credits": 4, "instructor": "Brian Lucid", "description": "Designing interactive products: research, prototyping, and motion." },
+
+  { "code": "INSH 2102", "name": "Husky Hidden Histories", "department": "INSH", "credits": 4, "instructor": "Patrick Mullins", "description": "Cross-cultural perspectives on the history of Northeastern and Boston." },
+  { "code": "JRNL 1150", "name": "Foundations of Journalism", "department": "JRNL", "credits": 4, "instructor": "Dan Kennedy", "description": "Reporting, interviewing, and writing for digital newsrooms." },
+
+  { "code": "ENTR 2206", "name": "The Entrepreneurial Mindset", "department": "ENTR", "credits": 4, "instructor": "Dan Gregory", "description": "Opportunity recognition, lean startup, and prototyping ventures." },
+  { "code": "MGMT 1101", "name": "Business and Society", "department": "MGMT", "credits": 4, "instructor": "Marc Meyer", "description": "Foundational management, organizational behavior, and ethics." }
+]

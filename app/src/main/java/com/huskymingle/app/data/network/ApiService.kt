@@ -29,11 +29,20 @@ interface ApiService {
     @POST("posts")
     suspend fun createPost(@Body body: CreatePostRequest): Post
 
+    @GET("posts/{id}")
+    suspend fun getPost(@Path("id") id: String): Post
+
     @POST("posts/{id}/like")
     suspend fun likePost(@Path("id") id: String): Map<String, Any>
 
     @DELETE("posts/{id}/like")
     suspend fun unlikePost(@Path("id") id: String): Map<String, Any>
+
+    @GET("posts/{id}/comments")
+    suspend fun getComments(@Path("id") id: String): List<Comment>
+
+    @POST("posts/{id}/comments")
+    suspend fun createComment(@Path("id") id: String, @Body body: CreateCommentRequest): Comment
 
     @GET("matching/recommendations")
     suspend fun getMatches(): List<MatchUser>
@@ -59,6 +68,15 @@ interface ApiService {
     @GET("messages/conversations")
     suspend fun getConversations(): List<Conversation>
 
+    @GET("messages/conversations/{id}/messages")
+    suspend fun getMessages(@Path("id") conversationId: String): List<Message>
+
+    @POST("messages/conversations/{id}/messages")
+    suspend fun sendMessage(
+        @Path("id") conversationId: String,
+        @Body body: SendMessageRequest,
+    ): Message
+
     @GET("communities")
     suspend fun getCommunities(): List<Community>
 
@@ -67,6 +85,9 @@ interface ApiService {
 
     @GET("marketplace")
     suspend fun getMarketplace(): List<MarketplaceItem>
+
+    @GET("marketplace/{id}")
+    suspend fun getMarketplaceItem(@Path("id") id: String): MarketplaceItem
 
     @GET("notifications")
     suspend fun getNotifications(): List<Notification>
@@ -79,6 +100,12 @@ interface ApiService {
 
     @GET("users/{username}")
     suspend fun getUserProfile(@Path("username") username: String): User
+
+    @GET("users/{username}/followers")
+    suspend fun getFollowers(@Path("username") username: String): List<User>
+
+    @GET("users/{username}/following")
+    suspend fun getFollowing(@Path("username") username: String): List<User>
 
     @GET("gaming")
     suspend fun getGaming(): List<GamingActivity>
