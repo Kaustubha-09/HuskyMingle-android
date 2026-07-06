@@ -387,18 +387,6 @@ Top items:
 - BiometricPrompt is invoked via `BIOMETRIC_STRONG | DEVICE_CREDENTIAL` only — no `BIOMETRIC_WEAK` fallback.
 - `themes.xml` paints the window background husky-red so the cold-start has no white flash before Compose renders.
 
-## Interview Talking Points
-
-**ANR-safe OkHttp auth** — The original `AuthInterceptor` called `runBlocking { authDataStore.accessToken.firstOrNull() }` to read the JWT from DataStore on every outbound request. `runBlocking` on an OkHttp dispatcher thread blocks the thread pool under any back-pressure — on slow devices or concurrent requests this triggered an ANR. The fix is a `@Volatile private var cachedToken: String?` that `AuthViewModel` writes synchronously on login, session restore, and logout. The interceptor reads a primitive — never suspends.
-
-**Single-Activity Compose** — `MainActivity` (extends `FragmentActivity` so `BiometricPrompt` gets a valid `FragmentManager`) is the only Activity. Navigation is `NavHost` with `Screen` sealed class routes. Deep-linking and back-stack work without Activity lifecycle complexity because all state lives in `ViewModel`, not `Activity.onSaveInstanceState`.
-
-**Manual DI vs. Hilt** — Hilt adds ~600 KB and 200 ms to cold-start via annotation processing. For a project with ~15 ViewModels and 5 singletons, the `HuskyMingleApp` `lateinit` pattern is faster and trivially auditable. The boundary is clear: if the app reaches 50+ ViewModels or 5+ Gradle modules, migrate to Hilt — the injection points are already annotated as comments.
-
-**Material 3 `CompositionLocal` design tokens** — `HMTheme.spacing` and `HMTheme.radius` are `ProvidableCompositionLocal<T>` values set at the root `HMTheme {}` call. Any Composable reads `HMTheme.spacing.md` without prop-drilling, and the values change in one place. This is the same pattern as Flutter's `Theme.of(context)` but typed without reflection.
-
----
-
 ## License
 
 [MIT](LICENSE) _(to be added — same as iOS sibling)_
