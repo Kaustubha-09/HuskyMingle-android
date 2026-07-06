@@ -387,17 +387,6 @@ Top items:
 - BiometricPrompt is invoked via `BIOMETRIC_STRONG | DEVICE_CREDENTIAL` only — no `BIOMETRIC_WEAK` fallback.
 - `themes.xml` paints the window background husky-red so the cold-start has no white flash before Compose renders.
 
----
-
-## Resume Bullets
-
-- Built a native Android client in **Kotlin + Jetpack Compose** (Material 3) for a campus social platform with 20+ feature surfaces, targeting API 26+ with a single-Activity Compose-only architecture
-- Engineered a **biometric app-lock** using AndroidX `BiometricPrompt` with `BIOMETRIC_STRONG | DEVICE_CREDENTIAL` authenticators, gated by a runtime `BiometricManager.canAuthenticate()` check and paired with Keystore-ready token storage in `DataStore<Preferences>`
-- Eliminated an **ANR-class bug** in the OkHttp `AuthInterceptor` by replacing a `runBlocking {}` call (blocking the network thread on every request) with a `@Volatile cachedToken` field updated synchronously by `AuthViewModel` — zero blocking on the network thread
-- Implemented a **brand design system** (`HMTheme` with `CompositionLocal`) covering a 6-color Husky palette, 8-level spacing scale, 5-radius enum, and 3 shadow modifiers — all applied via reusable Compose modifiers so no hex literals escape `ui/theme/`
-
----
-
 ## Interview Talking Points
 
 **ANR-safe OkHttp auth** — The original `AuthInterceptor` called `runBlocking { authDataStore.accessToken.firstOrNull() }` to read the JWT from DataStore on every outbound request. `runBlocking` on an OkHttp dispatcher thread blocks the thread pool under any back-pressure — on slow devices or concurrent requests this triggered an ANR. The fix is a `@Volatile private var cachedToken: String?` that `AuthViewModel` writes synchronously on login, session restore, and logout. The interceptor reads a primitive — never suspends.
